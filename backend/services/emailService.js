@@ -49,17 +49,29 @@ const sendEmail = async ({ to, subject, html, text }) => {
 
       if (res.ok) {
         console.log(`📧 [Brevo Email Sent] to: ${JSON.stringify(to)} | MessageId: ${data.messageId}`);
-        return { success: true, messageId: data.messageId, provider: 'brevo' };
+        return { success: true, delivered: true, messageId: data.messageId, provider: 'brevo' };
       } else {
-        console.warn(`⚠️ [Brevo API Warning] ${res.status}: ${data.message || JSON.stringify(data)}`);
-        if (data.message && data.message.includes('unrecognised IP address')) {
+        const errorDetail = data.message || JSON.stringify(data);
+        console.warn(`⚠️ [Brevo API Warning] ${res.status}: ${errorDetail}`);
+        if (errorDetail.includes('unrecognised IP address')) {
           console.warn(
             `👉 Action Required: Visit https://app.brevo.com/security/authorised_ips to disable Authorised IPs or whitelist the server IP.`
           );
         }
+        return {
+          success: false,
+          delivered: false,
+          error: errorDetail,
+          isIpBlocked: errorDetail.includes('unrecognised IP address'),
+        };
       }
     } catch (apiErr) {
       console.warn(`⚠️ [Brevo API Connection Error] ${apiErr.message}`);
+      return {
+        success: false,
+        delivered: false,
+        error: apiErr.message,
+      };
     }
   }
 
@@ -85,9 +97,10 @@ const sendEmail = async ({ to, subject, html, text }) => {
       });
 
       console.log(`📧 [SMTP Email Sent] to: ${JSON.stringify(to)} | MessageId: ${info.messageId}`);
-      return { success: true, messageId: info.messageId, provider: 'smtp' };
+      return { success: true, delivered: true, messageId: info.messageId, provider: 'smtp' };
     } catch (smtpErr) {
       console.warn(`⚠️ [SMTP Error] ${smtpErr.message}`);
+      return { success: false, delivered: false, error: smtpErr.message };
     }
   }
 
@@ -95,7 +108,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
   console.log(`✉️ [Email Service Simulation]`);
   console.log(`To: ${JSON.stringify(to)}`);
   console.log(`Subject: ${subject}`);
-  return { success: true, simulated: true };
+  return { success: false, delivered: false, simulated: true, error: 'No email service configured or available' };
 };
 
 /**

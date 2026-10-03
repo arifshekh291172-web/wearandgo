@@ -37,6 +37,8 @@ export const RegisterPage = () => {
   }, [searchParams]);
 
   const [otp, setOtp] = useState('');
+  const [devOtp, setDevOtp] = useState('');
+  const [noticeMsg, setNoticeMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
@@ -85,6 +87,8 @@ export const RegisterPage = () => {
         setStep(2);
         setCountdown(60);
         setCanResend(false);
+        if (res.devOtp) setDevOtp(res.devOtp);
+        if (res.message) setNoticeMsg(res.message);
       } else {
         setErrorMsg(res.message || 'Failed to send verification code');
       }
@@ -132,6 +136,8 @@ export const RegisterPage = () => {
       if (res.success) {
         setCountdown(60);
         setCanResend(false);
+        if (res.devOtp) setDevOtp(res.devOtp);
+        if (res.message) setNoticeMsg(res.message);
       } else {
         setErrorMsg(res.message || 'Failed to resend code');
       }
@@ -310,6 +316,29 @@ export const RegisterPage = () => {
                 <span>Edit</span>
               </button>
             </div>
+
+            {noticeMsg && (
+              <div className="p-3.5 bg-amber-50/90 border border-amber-300 rounded-2xl text-xs text-amber-950 space-y-2">
+                <p className="font-medium leading-relaxed">{noticeMsg}</p>
+                {devOtp && (
+                  <div className="pt-1 flex items-center justify-between bg-white/90 p-2.5 rounded-xl border border-amber-200">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-600 uppercase">Verification Code:</span>
+                      <span className="font-mono text-base font-black tracking-widest text-amber-700">
+                        {devOtp}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setOtp(devOtp)}
+                      className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs transition-all shadow-sm cursor-pointer"
+                    >
+                      Auto-fill OTP
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 text-center">

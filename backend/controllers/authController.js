@@ -69,14 +69,29 @@ exports.registerRequestOtp = async (req, res, next) => {
     }
 
     // Send verification OTP email via Brevo
-    await sendVerificationOtpEmail({
+    const emailResult = await sendVerificationOtpEmail({
       to: cleanEmail,
       name: name.trim(),
       otp,
     });
 
+    if (!emailResult.success) {
+      const isIpBlocked = emailResult.isIpBlocked || (emailResult.error && emailResult.error.includes('unrecognised IP address'));
+      return res.status(200).json({
+        success: true,
+        emailDelivered: false,
+        devOtp: otp,
+        isIpBlocked: Boolean(isIpBlocked),
+        message: isIpBlocked
+          ? `Brevo email delivery was blocked by Brevo Authorised IP security. Disable Authorised IPs at https://app.brevo.com/security/authorised_ips. Verification Code: ${otp}`
+          : `Email could not be delivered to inbox (${emailResult.error || 'Server error'}). Verification Code: ${otp}`,
+        email: cleanEmail,
+      });
+    }
+
     res.status(200).json({
       success: true,
+      emailDelivered: true,
       message: `A 6-digit verification code has been sent to ${cleanEmail}. Please enter it to complete registration.`,
       email: cleanEmail,
     });
@@ -188,14 +203,28 @@ exports.resendRegisterOtp = async (req, res, next) => {
     user.verificationOtpExpire = new Date(Date.now() + 10 * 60 * 1000);
     await user.save({ validateBeforeSave: false });
 
-    await sendVerificationOtpEmail({
+    const emailResult = await sendVerificationOtpEmail({
       to: cleanEmail,
       name: user.name,
       otp,
     });
 
+    if (!emailResult.success) {
+      const isIpBlocked = emailResult.isIpBlocked || (emailResult.error && emailResult.error.includes('unrecognised IP address'));
+      return res.status(200).json({
+        success: true,
+        emailDelivered: false,
+        devOtp: otp,
+        isIpBlocked: Boolean(isIpBlocked),
+        message: isIpBlocked
+          ? `Brevo email blocked (Authorised IP check). Fresh Code: ${otp}`
+          : `Email delivery issue (${emailResult.error || 'Server error'}). Fresh Code: ${otp}`,
+      });
+    }
+
     res.status(200).json({
       success: true,
+      emailDelivered: true,
       message: 'A fresh 6-digit verification code has been sent to your email.',
     });
   } catch (error) {
@@ -378,14 +407,29 @@ exports.forgotPasswordOtp = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Send OTP email via Brevo
-    await sendPasswordResetOtpEmail({
+    const emailResult = await sendPasswordResetOtpEmail({
       to: cleanEmail,
       name: user.name,
       otp,
     });
 
+    if (!emailResult.success) {
+      const isIpBlocked = emailResult.isIpBlocked || (emailResult.error && emailResult.error.includes('unrecognised IP address'));
+      return res.status(200).json({
+        success: true,
+        emailDelivered: false,
+        devOtp: otp,
+        isIpBlocked: Boolean(isIpBlocked),
+        message: isIpBlocked
+          ? `Brevo email delivery was blocked by Brevo Authorised IP security. Disable Authorised IPs at https://app.brevo.com/security/authorised_ips. Reset Code: ${otp}`
+          : `Email delivery issue (${emailResult.error || 'Server error'}). Reset Code: ${otp}`,
+        email: cleanEmail,
+      });
+    }
+
     res.status(200).json({
       success: true,
+      emailDelivered: true,
       message: `A 6-digit password reset code has been sent to ${cleanEmail}.`,
       email: cleanEmail,
     });

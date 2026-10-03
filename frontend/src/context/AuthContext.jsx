@@ -64,8 +64,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authService.requestRegisterOtp(userData);
       if (data.success) {
-        toast.success(data.message || 'Verification OTP sent to your email!');
-        return { success: true, message: data.message, email: data.email };
+        if (data.emailDelivered === false) {
+          toast.warning('Email delivery note: check code on screen');
+        } else {
+          toast.success(data.message || 'Verification OTP sent to your email!');
+        }
+        return {
+          success: true,
+          message: data.message,
+          email: data.email,
+          devOtp: data.devOtp,
+          emailDelivered: data.emailDelivered,
+          isIpBlocked: data.isIpBlocked,
+        };
       }
       return { success: false, message: data.message };
     } catch (err) {
@@ -97,8 +108,18 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authService.resendRegisterOtp(email);
       if (data.success) {
-        toast.success(data.message || 'Fresh OTP code sent to your email!');
-        return { success: true, message: data.message };
+        if (data.emailDelivered === false) {
+          toast.warning('Check fresh code on screen');
+        } else {
+          toast.success(data.message || 'Fresh OTP code sent to your email!');
+        }
+        return {
+          success: true,
+          message: data.message,
+          devOtp: data.devOtp,
+          emailDelivered: data.emailDelivered,
+          isIpBlocked: data.isIpBlocked,
+        };
       }
       return { success: false, message: data.message };
     } catch (err) {
