@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: wearandgo
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm run render-build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        value: mongodb+srv://arifshekh291172_db_user:YIqAIbzBsg66mEzo@cluster0.p6djmsf.mongodb.net/wearandgo?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        value: wearandgo_super_secret_jwt_key_2026_luxury_atelier_token
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: COOKIE_EXPIRE
+        value: 7
+      - key: CLIENT_URL
+        value: https://wearandgo.onrender.com
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_placeholder_key
+      - key: RAZORPAY_KEY_SECRET
+        value: rzp_test_placeholder_secret
