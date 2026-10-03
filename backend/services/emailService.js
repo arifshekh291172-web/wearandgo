@@ -4,7 +4,7 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 const getBrevoKey = () => process.env.BREVO_API_KEY;
 
 const STORE_PHONE = '+91 74002 45941';
-const STORE_EMAIL = 'wear.and.go.official@gmail.com';
+const STORE_EMAIL = 'arifshekh291172@gmail.com';
 const STORE_ADDRESS = 'Shop No. 3, Yamuna Bai Chawl, Asalpha Village, Ghatkopar West, Mumbai - 400084';
 const STORE_URL = process.env.CLIENT_URL || 'https://wearandgo.onrender.com';
 
@@ -13,12 +13,22 @@ const STORE_URL = process.env.CLIENT_URL || 'https://wearandgo.onrender.com';
  * Prioritizes Brevo REST API v3, falls back to SMTP if configured, or logs in dev.
  */
 const sendEmail = async ({ to, subject, html, text }) => {
-  const brevoKey = process.env.BREVO_API_KEY;
+  let brevoKey = (process.env.BREVO_API_KEY || '').trim().replace(/^["']|["']$/g, '');
   const fromName = process.env.FROM_NAME || 'Wear & Go';
-  const fromEmail = process.env.FROM_EMAIL || STORE_EMAIL;
+  // Use verified account email in Brevo so Brevo never rejects with sender authentication errors
+  let fromEmail = (process.env.FROM_EMAIL || '').trim().replace(/^["']|["']$/g, '');
+  if (!fromEmail || fromEmail.includes('wear.and.go.official')) {
+    fromEmail = 'arifshekh291172@gmail.com';
+  }
 
   // 1. Try Brevo REST API v3
   if (brevoKey) {
+    if (brevoKey.startsWith('xsmtpsib-')) {
+      console.warn(
+        `⚠️ [Brevo Config Warning] BREVO_API_KEY starts with 'xsmtpsib-', which is an SMTP key, not an API key! Please use the API key starting with 'xkeysib-' in your Render environment variables.`
+      );
+    }
+
     try {
       const recipients = Array.isArray(to)
         ? to.map((t) => (typeof t === 'string' ? { email: t } : t))
@@ -55,7 +65,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
         console.warn(`⚠️ [Brevo API Warning] ${res.status}: ${errorDetail}`);
         if (errorDetail.includes('unrecognised IP address')) {
           console.warn(
-            `👉 Action Required: Visit https://app.brevo.com/security/authorised_ips to disable Authorised IPs or whitelist the server IP.`
+            `👉 Action Required: Visit https://app.brevo.com/security/authorised_ips to click "Deactivate for API keys".`
           );
         }
         return {

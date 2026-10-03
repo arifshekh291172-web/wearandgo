@@ -28,6 +28,9 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
+// Enable trust proxy for Render, Heroku, and reverse proxies so client IP is accurately detected
+app.set('trust proxy', 1);
+
 // Security Headers & Content Security Policy for Razorpay and Assets
 app.use(
   helmet({
@@ -84,6 +87,10 @@ app.use(
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
+  validate: {
+    xForwardedForHeader: false,
+    default: true,
+  },
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again after 15 minutes',
