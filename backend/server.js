@@ -129,13 +129,22 @@ const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
 
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  app.get('*', (req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  });
 }
+
+const frontendPublic = path.join(__dirname, '..', 'frontend', 'public');
+if (fs.existsSync(frontendPublic)) {
+  app.use(express.static(frontendPublic));
+}
+
+app.get('*', (req, res, next) => {
+  if (req.originalUrl.startsWith('/api')) {
+    return next();
+  }
+  if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
+    return res.sendFile(path.join(frontendDist, 'index.html'));
+  }
+  next();
+});
 
 // 404 Route Handler for undefined API endpoints
 app.use('/api/*', (req, res) => {
