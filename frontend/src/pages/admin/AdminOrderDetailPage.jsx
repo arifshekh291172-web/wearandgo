@@ -50,14 +50,17 @@ const AdminOrderDetailPage = () => {
     try {
       setLoading(true);
       const res = await orderService.getOrderById(id);
-      if (res.success) {
-        setOrder(res.data);
-        setNewStatus(res.data.orderStatus);
-        setTrackingNumber(res.data.trackingNumber || '');
-        setCourierName(res.data.courierName || '');
+      const orderData = res.data || res.order;
+      if (orderData) {
+        setOrder(orderData);
+        setNewStatus(orderData.orderStatus);
+        setTrackingNumber(orderData.trackingNumber || '');
+        setCourierName(orderData.courierName || '');
+      } else {
+        toast.error('Order not found');
       }
     } catch (err) {
-      toast.error('Failed to load order details');
+      toast.error(err.response?.data?.message || 'Failed to load order details');
     } finally {
       setLoading(false);
     }

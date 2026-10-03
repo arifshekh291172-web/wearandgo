@@ -61,6 +61,20 @@ const AdminOrdersPage = () => {
     fetchOrders();
   };
 
+  const handleQuickStatusChange = async (orderId, newStatus) => {
+    try {
+      const res = await adminService.updateOrderStatus(orderId, newStatus, 'Quick update from order table');
+      if (res.success) {
+        toast.success(`Order status updated to ${newStatus.replace(/_/g, ' ')}`);
+        setOrders((prev) =>
+          prev.map((o) => (o._id === orderId ? { ...o, orderStatus: newStatus } : o))
+        );
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update order status');
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'DELIVERED':
@@ -158,7 +172,9 @@ const AdminOrdersPage = () => {
                 {orders.map((order) => (
                   <tr key={order._id} className="hover:bg-neutral-50/70 transition-colors">
                     <td className="py-3 px-4 font-mono font-bold text-neutral-900">
-                      #{order._id.slice(-6).toUpperCase()}
+                      <Link to={`/admin/orders/${order._id}`} className="hover:underline text-amber-700">
+                        #{order._id.slice(-6).toUpperCase()}
+                      </Link>
                     </td>
                     <td className="py-3 px-4 text-neutral-500 text-xs">
                       {formatDate(order.createdAt)}
@@ -185,14 +201,22 @@ const AdminOrdersPage = () => {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold ${getStatusBadge(order.orderStatus)}`}>
-                        {order.orderStatus.replace(/_/g, ' ')}
-                      </span>
+                      <select
+                        value={order.orderStatus}
+                        onChange={(e) => handleQuickStatusChange(order._id, e.target.value)}
+                        className={`text-xs font-bold rounded-lg px-2.5 py-1 border border-neutral-200 cursor-pointer focus:outline-none shadow-sm ${getStatusBadge(order.orderStatus)}`}
+                      >
+                        {STATUS_OPTIONS.filter((s) => s !== 'ALL').map((s) => (
+                          <option key={s} value={s} className="bg-white text-slate-900">
+                            {s.replace(/_/g, ' ')}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <Link
                         to={`/admin/orders/${order._id}`}
-                        className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-lg text-xs font-semibold transition-colors"
+                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Manage</span>

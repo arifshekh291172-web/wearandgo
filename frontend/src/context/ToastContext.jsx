@@ -27,6 +27,7 @@ export const ToastProvider = ({ children }) => {
     warning: (msg, dur) => addToast(msg, 'warning', dur),
     info: (msg, dur) => addToast(msg, 'info', dur),
   };
+  toast.toast = toast;
 
   return (
     <ToastContext.Provider value={toast}>

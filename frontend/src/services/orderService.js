@@ -16,6 +16,11 @@ export const orderService = {
     return res.data;
   },
 
+  async getOrderById(id) {
+    const res = await api.get(`/orders/${id}`);
+    return res.data;
+  },
+
   async cancelOrder(id, reason) {
     const res = await api.put(`/orders/${id}/cancel`, { reason });
     return res.data;
