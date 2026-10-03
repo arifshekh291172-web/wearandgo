@@ -10,6 +10,9 @@ import {
   Youtube,
   Send,
   Lock,
+  MapPin,
+  Phone,
+  Mail,
 } from 'lucide-react';
 import { productService } from '../../services/productService';
 import { useToast } from '../../context/ToastContext';
@@ -86,9 +89,9 @@ export const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-5 gap-10 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 pb-12">
         {/* Brand & Newsletter Column */}
-        <div className="md:col-span-2 space-y-4">
+        <div className="sm:col-span-2 space-y-4">
           <Link to="/" className="inline-flex items-center gap-3 group">
             <img
               src="/logo.png"
@@ -257,6 +260,31 @@ export const Footer = () => {
             <li>
               <a href={`https://wa.me/${STORE_CONFIG.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 WhatsApp Support
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 5: BOUTIQUE & CONTACT */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-bold text-white uppercase tracking-wider">ATELIER & STORE</h4>
+          <ul className="space-y-2.5 text-xs text-slate-400">
+            <li className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed text-slate-300">
+                {STORE_CONFIG.address}
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+              <a href={`tel:${STORE_CONFIG.supportPhone.replace(/\s+/g, '')}`} className="hover:text-amber-400 text-slate-300 font-bold transition-colors">
+                {STORE_CONFIG.supportPhone}
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+              <a href={`mailto:${STORE_CONFIG.supportEmail}`} className="hover:text-amber-400 text-slate-300 transition-colors">
+                {STORE_CONFIG.supportEmail}
               </a>
             </li>
           </ul>

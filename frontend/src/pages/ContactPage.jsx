@@ -99,12 +99,24 @@ export const ContactPage = () => {
           </div>
 
           <div className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-            <div className="p-3 bg-slate-100 text-slate-800 rounded-xl shrink-0">
+            <div className="p-3 bg-amber-50 text-amber-800 rounded-xl shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
-            <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Flagship Studio</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">{STORE_CONFIG.address}</p>
+            <div className="space-y-1.5">
+              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Flagship Store</h4>
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">{STORE_CONFIG.address}</p>
+              <div className="pt-1 flex flex-wrap items-center gap-3">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Shop+no+3+Yamuna+Bai+chawal+Asalpha+Vilage+Ghatkopar+west+Mumbai+400084"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-800 underline gap-1"
+                >
+                  Open in Google Maps →
+                </a>
+                <span className="text-slate-300">•</span>
+                <span className="text-[11px] text-slate-400">Open 10 AM - 10 PM</span>
+              </div>
             </div>
           </div>
         </div>
