@@ -60,22 +60,73 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (userData) => {
+  const requestRegisterOtp = async (userData) => {
     try {
-      const data = await authService.register(userData);
+      const data = await authService.requestRegisterOtp(userData);
       if (data.success) {
-        localStorage.setItem('wear_and_go_token', data.token);
-        localStorage.setItem('wear_and_go_user', JSON.stringify(data.user));
-        setUser(data.user);
-        toast.success('Account created successfully!');
-        return { success: true, user: data.user };
+        toast.success(data.message || 'Verification OTP sent to your email!');
+        return { success: true, message: data.message, email: data.email };
       }
+      return { success: false, message: data.message };
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed.';
+      const msg = err.response?.data?.message || 'Failed to send verification OTP.';
       toast.error(msg);
       return { success: false, message: msg };
     }
   };
+
+  const verifyRegisterOtp = async (email, otp) => {
+    try {
+      const data = await authService.verifyRegisterOtp(email, otp);
+      if (data.success) {
+        localStorage.setItem('wear_and_go_token', data.token);
+        localStorage.setItem('wear_and_go_user', JSON.stringify(data.user));
+        setUser(data.user);
+        toast.success('Account verified and created successfully! 🎉');
+        return { success: true, user: data.user };
+      }
+      return { success: false, message: data.message };
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Invalid or expired OTP code.';
+      toast.error(msg);
+      return { success: false, message: msg };
+    }
+  };
+
+  const resendRegisterOtp = async (email) => {
+    try {
+      const data = await authService.resendRegisterOtp(email);
+      if (data.success) {
+        toast.success(data.message || 'Fresh OTP code sent to your email!');
+        return { success: true, message: data.message };
+      }
+      return { success: false, message: data.message };
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to resend OTP.';
+      toast.error(msg);
+      return { success: false, message: msg };
+    }
+  };
+
+  const verifyResetPasswordOtp = async (email, otp, password) => {
+    try {
+      const data = await authService.verifyResetPasswordOtp(email, otp, password);
+      if (data.success) {
+        localStorage.setItem('wear_and_go_token', data.token);
+        localStorage.setItem('wear_and_go_user', JSON.stringify(data.user));
+        setUser(data.user);
+        toast.success('Password reset successfully! Welcome back.');
+        return { success: true, user: data.user };
+      }
+      return { success: false, message: data.message };
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to reset password.';
+      toast.error(msg);
+      return { success: false, message: msg };
+    }
+  };
+
+  const register = requestRegisterOtp;
 
   const logout = async () => {
     try {
@@ -158,6 +209,10 @@ export const AuthProvider = ({ children }) => {
     isAdmin: user?.role === 'admin',
     login,
     register,
+    requestRegisterOtp,
+    verifyRegisterOtp,
+    resendRegisterOtp,
+    verifyResetPasswordOtp,
     logout,
     updateProfile,
     refreshUser,

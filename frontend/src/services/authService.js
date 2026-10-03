@@ -2,7 +2,22 @@ import api from './api';
 
 export const authService = {
   async register(data) {
-    const res = await api.post('/auth/register', data);
+    const res = await api.post('/auth/register-request-otp', data);
+    return res.data;
+  },
+
+  async requestRegisterOtp(data) {
+    const res = await api.post('/auth/register-request-otp', data);
+    return res.data;
+  },
+
+  async verifyRegisterOtp(email, otp) {
+    const res = await api.post('/auth/register-verify-otp', { email, otp });
+    return res.data;
+  },
+
+  async resendRegisterOtp(email) {
+    const res = await api.post('/auth/resend-register-otp', { email });
     return res.data;
   },
 
@@ -32,7 +47,17 @@ export const authService = {
   },
 
   async forgotPassword(email) {
-    const res = await api.post('/auth/forgot-password', { email });
+    const res = await api.post('/auth/forgot-password-otp', { email });
+    return res.data;
+  },
+
+  async requestForgotPasswordOtp(email) {
+    const res = await api.post('/auth/forgot-password-otp', { email });
+    return res.data;
+  },
+
+  async verifyResetPasswordOtp(email, otp, password) {
+    const res = await api.post('/auth/reset-password-otp', { email, otp, password });
     return res.data;
   },
 

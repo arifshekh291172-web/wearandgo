@@ -75,16 +75,17 @@ export const AdminLoginPage = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
         {/* Brand Card Header */}
         <div className="text-center space-y-3 mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-700/10 border border-amber-500/30 text-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.2)] mx-auto">
-            <Shield className="w-7 h-7" />
-          </div>
+          <Link to="/" className="inline-block group">
+            <img
+              src="/logo.png"
+              alt="Wear & Go Official"
+              className="h-20 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_4px_20px_rgba(245,158,11,0.35)]"
+            />
+          </Link>
 
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-serif">
-              WEAR & GO
-            </h1>
-            <div className="inline-block mt-1 px-3 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[10px] uppercase tracking-widest font-bold text-amber-400">
-              Admin Portal
+            <div className="inline-block mt-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-[10px] uppercase tracking-widest font-extrabold text-amber-400">
+              Admin Control Console
             </div>
           </div>
           <p className="text-xs text-slate-400 max-w-xs mx-auto">

@@ -490,6 +490,190 @@ const sendPasswordResetEmail = async (user, resetUrl) => {
   });
 };
 
+/**
+ * 6. Account Registration OTP Email
+ */
+const sendVerificationOtpEmail = async ({ to, name, otp }) => {
+  const userName = name || 'Fashion Connoisseur';
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Verify Your Email - WEAR & GO</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0A0B0E; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0B0E; padding: 30px 10px;">
+        <tr>
+          <td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 540px; background-color: #12141A; border: 1px solid #1E232E; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
+              
+              <!-- Header Brand Logo -->
+              <tr>
+                <td style="padding: 32px 24px; text-align: center; background: linear-gradient(180deg, #181C26 0%, #12141A 100%); border-bottom: 1px solid #1E232E;">
+                  <img src="${STORE_URL}/logo.png" alt="WEAR & GO" style="height: 64px; max-height: 64px; width: auto; margin-bottom: 10px; display: inline-block;" />
+                  <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #F59E0B; text-transform: uppercase;">
+                    WEAR & GO
+                  </h1>
+                  <p style="margin: 4px 0 0 0; font-size: 11px; letter-spacing: 1.5px; color: #94A3B8; text-transform: uppercase;">
+                    Style That Moves With You
+                  </p>
+                </td>
+              </tr>
+
+              <!-- OTP Content -->
+              <tr>
+                <td style="padding: 32px 28px; text-align: center;">
+                  <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #FFFFFF;">
+                    Verify Your Account, ${userName}! 🛡️
+                  </h2>
+                  <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">
+                    Thank you for signing up at Wear & Go. To complete your registration and secure your account, please enter the one-time verification code below:
+                  </p>
+
+                  <!-- OTP Display Box -->
+                  <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px dashed #F59E0B; border-radius: 14px; padding: 24px 16px; margin: 24px 0;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #FBBF24; display: block; margin-bottom: 10px;">
+                      Your One-Time Verification OTP
+                    </span>
+                    <div style="display: inline-block; background-color: #07090E; border: 2px solid #F59E0B; border-radius: 10px; padding: 12px 32px; font-size: 34px; font-weight: 900; letter-spacing: 10px; color: #F59E0B; font-family: monospace;">
+                      ${otp}
+                    </div>
+                    <p style="margin: 12px 0 0 0; font-size: 11px; color: #94A3B8;">
+                      ⏳ This code expires in <strong>10 minutes</strong>.
+                    </p>
+                  </div>
+
+                  <p style="margin: 0 0 8px 0; font-size: 12px; color: #64748B;">
+                    If you did not initiate this registration request, please disregard this email.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Store Address & Contact Footer -->
+              <tr>
+                <td style="padding: 20px 24px; background-color: #0A0B0E; border-top: 1px solid #1E232E; text-align: center;">
+                  <p style="margin: 0 0 4px 0; font-size: 11px; color: #94A3B8; line-height: 1.5;">
+                    ${STORE_ADDRESS}
+                  </p>
+                  <p style="margin: 0 0 8px 0; font-size: 11px; color: #F59E0B;">
+                    📞 Support: <a href="tel:${STORE_PHONE.replace(/\s+/g, '')}" style="color: #F59E0B; text-decoration: none; font-weight: 700;">${STORE_PHONE}</a>
+                  </p>
+                  <p style="margin: 0; font-size: 10px; color: #475569;">
+                    © 2026 WEAR & GO. All rights reserved.
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Your Wear & Go Verification Code is ${otp}`,
+    html,
+    text: `Your Wear & Go verification code is: ${otp}. It will expire in 10 minutes.`,
+  });
+};
+
+/**
+ * 7. Password Reset OTP Email
+ */
+const sendPasswordResetOtpEmail = async ({ to, name, otp }) => {
+  const userName = name || 'Customer';
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reset Password OTP - WEAR & GO</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0A0B0E; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0B0E; padding: 30px 10px;">
+        <tr>
+          <td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 540px; background-color: #12141A; border: 1px solid #1E232E; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
+              
+              <!-- Header Brand Logo -->
+              <tr>
+                <td style="padding: 32px 24px; text-align: center; background: linear-gradient(180deg, #181C26 0%, #12141A 100%); border-bottom: 1px solid #1E232E;">
+                  <img src="${STORE_URL}/logo.png" alt="WEAR & GO" style="height: 64px; max-height: 64px; width: auto; margin-bottom: 10px; display: inline-block;" />
+                  <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #F59E0B; text-transform: uppercase;">
+                    WEAR & GO
+                  </h1>
+                  <p style="margin: 4px 0 0 0; font-size: 11px; letter-spacing: 1.5px; color: #94A3B8; text-transform: uppercase;">
+                    Security Center
+                  </p>
+                </td>
+              </tr>
+
+              <!-- OTP Content -->
+              <tr>
+                <td style="padding: 32px 28px; text-align: center;">
+                  <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #FFFFFF;">
+                    Password Reset Request 🔐
+                  </h2>
+                  <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">
+                    Hello ${userName}, we received a request to reset the password for your Wear & Go account. Please use the one-time code below to set your new password:
+                  </p>
+
+                  <!-- OTP Display Box -->
+                  <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.05) 100%); border: 1px dashed #EF4444; border-radius: 14px; padding: 24px 16px; margin: 24px 0;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #F87171; display: block; margin-bottom: 10px;">
+                      Your Password Reset OTP
+                    </span>
+                    <div style="display: inline-block; background-color: #07090E; border: 2px solid #EF4444; border-radius: 10px; padding: 12px 32px; font-size: 34px; font-weight: 900; letter-spacing: 10px; color: #F87171; font-family: monospace;">
+                      ${otp}
+                    </div>
+                    <p style="margin: 12px 0 0 0; font-size: 11px; color: #94A3B8;">
+                      ⏳ This code expires in <strong>10 minutes</strong>. Never share this code with anyone.
+                    </p>
+                  </div>
+
+                  <p style="margin: 0 0 8px 0; font-size: 12px; color: #64748B;">
+                    If you did not request a password reset, please contact us immediately or ignore this email.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Store Address & Contact Footer -->
+              <tr>
+                <td style="padding: 20px 24px; background-color: #0A0B0E; border-top: 1px solid #1E232E; text-align: center;">
+                  <p style="margin: 0 0 4px 0; font-size: 11px; color: #94A3B8; line-height: 1.5;">
+                    ${STORE_ADDRESS}
+                  </p>
+                  <p style="margin: 0 0 8px 0; font-size: 11px; color: #F59E0B;">
+                    📞 Support: <a href="tel:${STORE_PHONE.replace(/\s+/g, '')}" style="color: #F59E0B; text-decoration: none; font-weight: 700;">${STORE_PHONE}</a>
+                  </p>
+                  <p style="margin: 0; font-size: 10px; color: #475569;">
+                    © 2026 WEAR & GO. All rights reserved.
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Password Reset Code: ${otp} - WEAR & GO`,
+    html,
+    text: `Your Wear & Go password reset code is: ${otp}. It will expire in 10 minutes.`,
+  });
+};
+
 module.exports = {
   sendEmail,
   sendWelcomeEmail,
@@ -497,4 +681,6 @@ module.exports = {
   sendNewsletterWelcomeEmail,
   sendOrderConfirmationEmail,
   sendPasswordResetEmail,
+  sendVerificationOtpEmail,
+  sendPasswordResetOtpEmail,
 };

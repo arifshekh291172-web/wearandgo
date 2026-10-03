@@ -14,9 +14,13 @@ export const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
+    setUnverifiedEmail('');
     setSubmitting(true);
     const res = await login(email, password);
     setSubmitting(false);
@@ -26,6 +30,11 @@ export const LoginPage = () => {
         navigate(redirect.startsWith('/admin') ? redirect : '/admin/dashboard');
       } else {
         navigate(redirect);
+      }
+    } else {
+      setErrorMsg(res.message || 'Login failed. Please check credentials.');
+      if (res.isUnverified) {
+        setUnverifiedEmail(email);
       }
     }
   };
@@ -50,6 +59,20 @@ export const LoginPage = () => {
             </p>
           </div>
         </div>
+
+        {errorMsg && (
+          <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium space-y-2">
+            <p>{errorMsg}</p>
+            {unverifiedEmail && (
+              <Link
+                to={`/register?verify=true&email=${encodeURIComponent(unverifiedEmail)}`}
+                className="inline-block font-bold text-amber-600 hover:text-amber-700 underline"
+              >
+                Click here to verify your account with OTP →
+              </Link>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
