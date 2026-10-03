@@ -1,5 +1,8 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const User = require('../models/User');
+const NewsletterSubscriber = require('../models/NewsletterSubscriber');
+const { sendNewProductAnnouncementEmail } = require('../services/emailService');
 
 // @desc    Get all products with filters, sorting & pagination
 // @route   GET /api/products
@@ -307,6 +310,27 @@ exports.createProduct = async (req, res, next) => {
     }
 
     const product = await Product.create(productData);
+
+    // Asynchronously broadcast new arrival alert to users and subscribers
+    (async () => {
+      try {
+        const [users, subscribers] = await Promise.all([
+          User.find({ isActive: { $ne: false } }).select('email name').lean(),
+          NewsletterSubscriber.find({ active: { $ne: false } }).select('email').lean(),
+        ]);
+
+        const emailSet = new Set();
+        users.forEach((u) => u.email && emailSet.add(u.email));
+        subscribers.forEach((s) => s.email && emailSet.add(s.email));
+
+        const recipients = Array.from(emailSet);
+        if (recipients.length > 0) {
+          await sendNewProductAnnouncementEmail({ product, recipients });
+        }
+      } catch (broadcastErr) {
+        console.warn('Error broadcasting new product email:', broadcastErr.message);
+      }
+    })();
 
     res.status(201).json({
       success: true,

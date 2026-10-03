@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const User = require('../models/User');
 const { sendTokenResponse } = require('../utils/generateToken');
-const { sendPasswordResetEmail } = require('../services/emailService');
+const { sendPasswordResetEmail, sendWelcomeEmail } = require('../services/emailService');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -31,6 +31,11 @@ exports.register = async (req, res, next) => {
       password,
       phone,
     });
+
+    // Send welcome email via Brevo asynchronously
+    sendWelcomeEmail(user).catch((err) =>
+      console.warn('Welcome email could not be sent:', err.message)
+    );
 
     sendTokenResponse(user, 201, res, 'Account created successfully!');
   } catch (error) {

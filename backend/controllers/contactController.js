@@ -1,5 +1,6 @@
 const ContactMessage = require('../models/ContactMessage');
 const NewsletterSubscriber = require('../models/NewsletterSubscriber');
+const { sendNewsletterWelcomeEmail } = require('../services/emailService');
 
 // @desc    Submit a contact inquiry
 // @route   POST /api/contact
@@ -100,9 +101,14 @@ exports.subscribeNewsletter = async (req, res, next) => {
 
     await NewsletterSubscriber.create({ email: email.toLowerCase() });
 
+    // Send newsletter welcome voucher asynchronously via Brevo
+    sendNewsletterWelcomeEmail(email.toLowerCase()).catch((err) =>
+      console.warn('Newsletter welcome email error:', err.message)
+    );
+
     res.status(201).json({
       success: true,
-      message: 'Thank you for subscribing! Enjoy 10% off your first order.',
+      message: 'Thank you for subscribing! Check your email for your ₹200 gift voucher.',
     });
   } catch (error) {
     next(error);
