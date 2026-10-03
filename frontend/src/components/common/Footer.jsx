@@ -262,6 +262,11 @@ export const Footer = () => {
                 WhatsApp Support
               </a>
             </li>
+            <li className="pt-1">
+              <Link to="/admin/login" className="hover:text-amber-400 text-slate-500 transition-colors">
+                Admin Portal
+              </Link>
+            </li>
           </ul>
         </div>
 

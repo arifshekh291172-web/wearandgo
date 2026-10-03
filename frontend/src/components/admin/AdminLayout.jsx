@@ -25,12 +25,12 @@ export const AdminLayout = () => {
             This management console requires verified administrator privileges. Please sign in with an authorized account.
           </p>
           <div className="pt-2">
-            <a
-              href="/login?redirect=/admin/dashboard"
-              className="inline-block w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
+            <Link
+              to="/admin/login"
+              className="inline-block w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
             >
-              Sign In as Admin
-            </a>
+              Sign In to Admin Portal
+            </Link>
           </div>
         </div>
       </div>

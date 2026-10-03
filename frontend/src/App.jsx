@@ -49,6 +49,7 @@ import AdminCouponsPage from './pages/admin/AdminCouponsPage';
 import AdminReviewsPage from './pages/admin/AdminReviewsPage';
 import AdminBannersPage from './pages/admin/AdminBannersPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
 
 // 404 Not Found Page
 const NotFoundPage = () => (
@@ -125,6 +126,10 @@ function App() {
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
+
+              {/* Dedicated Separate Admin Login Portal */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin-login" element={<Navigate to="/admin/login" replace />} />
 
               {/* Admin Panel Layout & Nested Routes */}
               <Route path="/admin" element={<AdminLayout />}>
