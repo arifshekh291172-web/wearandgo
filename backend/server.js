@@ -28,10 +28,35 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
-// Security Headers
+// Security Headers & Content Security Policy for Razorpay and Assets
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          'https://checkout.razorpay.com',
+        ],
+        frameSrc: [
+          "'self'",
+          'https://api.razorpay.com',
+          'https://checkout.razorpay.com',
+        ],
+        connectSrc: [
+          "'self'",
+          'https://api.razorpay.com',
+          'https://lumberjack.razorpay.com',
+          'https://*.razorpay.com',
+        ],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      },
+    },
   })
 );
 
