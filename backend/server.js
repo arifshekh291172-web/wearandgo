@@ -144,23 +144,19 @@ Sitemap: https://wearandgo.onrender.com/sitemap.xml
 });
 
 // Dynamic SEO Sitemap XML
-app.get('/sitemap.xml', async (req, res) => {
+app.get(['/sitemap.xml', '/sitemap'], async (req, res) => {
   try {
     const baseUrl = 'https://wearandgo.onrender.com';
     const staticUrls = [
       { loc: `${baseUrl}/`, priority: '1.0', changefreq: 'daily' },
       { loc: `${baseUrl}/shop`, priority: '0.9', changefreq: 'daily' },
-      { loc: `${baseUrl}/shop?gender=men`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${baseUrl}/shop?gender=women`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${baseUrl}/shop?newArrival=true`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${baseUrl}/shop?bestseller=true`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${baseUrl}/shop?discountOnly=true`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${baseUrl}/about`, priority: '0.6', changefreq: 'monthly' },
+      { loc: `${baseUrl}/about`, priority: '0.7', changefreq: 'monthly' },
       { loc: `${baseUrl}/contact`, priority: '0.7', changefreq: 'monthly' },
-      { loc: `${baseUrl}/policies/shipping`, priority: '0.5', changefreq: 'monthly' },
-      { loc: `${baseUrl}/policies/returns`, priority: '0.5', changefreq: 'monthly' },
-      { loc: `${baseUrl}/policies/terms`, priority: '0.5', changefreq: 'monthly' },
-      { loc: `${baseUrl}/policies/privacy`, priority: '0.5', changefreq: 'monthly' },
+      { loc: `${baseUrl}/faq`, priority: '0.6', changefreq: 'monthly' },
+      { loc: `${baseUrl}/shipping-policy`, priority: '0.5', changefreq: 'monthly' },
+      { loc: `${baseUrl}/return-policy`, priority: '0.5', changefreq: 'monthly' },
+      { loc: `${baseUrl}/privacy`, priority: '0.5', changefreq: 'monthly' },
+      { loc: `${baseUrl}/terms`, priority: '0.5', changefreq: 'monthly' },
     ];
 
     let categoryUrls = [];
@@ -183,11 +179,10 @@ app.get('/sitemap.xml', async (req, res) => {
       const products = await Product.find({ status: { $ne: 'archived' } }).select('slug images name updatedAt').lean();
       productUrls = products.map((prod) => ({
         loc: `${baseUrl}/product/${prod.slug}`,
-        priority: '0.75',
+        priority: '0.80',
         changefreq: 'weekly',
         lastmod: prod.updatedAt ? new Date(prod.updatedAt).toISOString().split('T')[0] : '2026-10-03',
         image: prod.images?.[0]?.url || null,
-        title: prod.name || null,
       }));
     } catch (e) {
       console.warn('Product fetch for sitemap failed:', e.message);
@@ -208,21 +203,24 @@ app.get('/sitemap.xml', async (req, res) => {
     for (const url of productUrls) {
       xml += `  <url>\n    <loc>${url.loc}</loc>\n    <lastmod>${url.lastmod}</lastmod>\n    <changefreq>${url.changefreq}</changefreq>\n    <priority>${url.priority}</priority>\n`;
       if (url.image) {
-        xml += `    <image:image>\n      <image:loc>${encodeURI(url.image)}</image:loc>\n      <image:title>${(url.title || '').replace(/[<>&'"]/g, '')}</image:title>\n    </image:image>\n`;
+        const cleanImg = url.image.replace(/&/g, '&amp;');
+        xml += `    <image:image>\n      <image:loc>${cleanImg}</image:loc>\n    </image:image>\n`;
       }
       xml += `  </url>\n`;
     }
 
     xml += `</urlset>`;
 
-    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('X-Robots-Tag', 'all');
     res.setHeader('Cache-Control', 'public, max-age=3600');
     return res.status(200).send(xml);
   } catch (err) {
     console.error('Sitemap generation error:', err);
     const staticSitemap = path.join(__dirname, '..', 'frontend', 'public', 'sitemap.xml');
     if (fs.existsSync(staticSitemap)) {
-      res.setHeader('Content-Type', 'application/xml');
+      res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+      res.setHeader('X-Robots-Tag', 'all');
       return res.sendFile(staticSitemap);
     }
     return res.status(500).send('Error generating sitemap');

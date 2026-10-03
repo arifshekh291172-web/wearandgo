@@ -52,38 +52,6 @@
     <priority>0.85</priority>
   </url>
 
-  <!-- Popular Filters & Shopping Edits -->
-  <url>
-    <loc>https://wearandgo.onrender.com/shop?gender=men</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://wearandgo.onrender.com/shop?gender=women</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://wearandgo.onrender.com/shop?newArrival=true</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://wearandgo.onrender.com/shop?bestseller=true</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://wearandgo.onrender.com/shop?discountOnly=true</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
   <!-- Product Pages -->
   <url>
     <loc>https://wearandgo.onrender.com/product/oversized-heavyweight-cotton-graphic-tee</loc>

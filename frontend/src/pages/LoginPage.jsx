@@ -22,8 +22,8 @@ export const LoginPage = () => {
     setSubmitting(false);
 
     if (res.success) {
-      if (res.user?.role === 'admin' && redirect.includes('/admin')) {
-        navigate('/admin/dashboard');
+      if (res.user?.role === 'admin') {
+        navigate(redirect.startsWith('/admin') ? redirect : '/admin/dashboard');
       } else {
         navigate(redirect);
       }
@@ -111,36 +111,6 @@ export const LoginPage = () => {
           </button>
         </form>
 
-        {/* Demo Credentials Helper Pill */}
-        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-600 space-y-1">
-          <p className="font-bold text-slate-900">Demo Accounts Available:</p>
-          <div className="flex justify-between">
-            <span>Admin: admin@wearandgo.com</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('admin@wearandgo.com');
-                setPassword('Admin@123456');
-              }}
-              className="text-amber-700 font-bold hover:underline"
-            >
-              Fill Admin
-            </button>
-          </div>
-          <div className="flex justify-between">
-            <span>Customer: rahul@example.com</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('rahul@example.com');
-                setPassword('User@123456');
-              }}
-              className="text-amber-700 font-bold hover:underline"
-            >
-              Fill User
-            </button>
-          </div>
-        </div>
 
         <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
           Don't have an account?{' '}
